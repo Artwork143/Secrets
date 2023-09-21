@@ -8,15 +8,26 @@ import md5 from "md5";
 // import _ from "lodash";
 
 const app = express();
-const mongodbPass = process.env.MONGODBPASS;
+const PORT = process.env.PORT || 3000
+
+//atlas db connection
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(`mongodb+srv://${process.env.MONGODBPASS}@cluster0.qe1zc6f.mongodb.net/userDB`);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
+}
 
 app.set('view engine', 'ejs');
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
+//local db connection
 // mongoose.connect("mongodb://127.0.0.1:27017/userDB", { useNewUrlParser: true});
-mongoose.connect(`mongodb+srv://${mongodbPass}@cluster0.qe1zc6f.mongodb.net/userDB`, { useNewUrlParser: true});
 
 const userSchema = new mongoose.Schema({
     email: String,
@@ -81,7 +92,14 @@ app.post("/login", (req, res) => {
 
 
 
-app.listen(3000, function() {
-    console.log("Server started on port 3000");
-  });
+// app.listen(3000, function() {
+//     console.log("Server started on port 3000");
+//   });
+
+//Connect to the database before listening
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log("listening for requests");
+    })
+})
   

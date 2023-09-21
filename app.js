@@ -8,8 +8,7 @@ import md5 from "md5";
 // import _ from "lodash";
 
 const app = express();
-const PORT = process.env.PORT || 3000
-
+const PORT = process.env.PORT
 //atlas db connection
 const connectDB = async () => {
   try {
